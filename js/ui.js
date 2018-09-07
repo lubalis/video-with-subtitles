@@ -1,6 +1,8 @@
-document.addEventListener('DOMContentLoaded', function(){
+const playerFunctions = (subtitlesArray) => {
     
     const videoPlayer = document.querySelector('video');
+
+    const subtitleDiv = document.querySelector('.text');
 
     const controlElements = {
         buttonPlay: document.querySelector('.play'),
@@ -21,10 +23,13 @@ document.addEventListener('DOMContentLoaded', function(){
     function handleClickStop () {
         videoPlayer.pause();
         videoPlayer.currentTime = 0;
+        subtitleDiv.innerText = '';
+        videoPlayer.subtitleIndex = 0;
     }
 
     function handleChangeTime () {
         videoPlayer.currentTime = Number(this.value)*videoPlayer.duration/100;
+        findNextSubtitleElement();
     }
 
     function handleChangeVolume () {
@@ -36,8 +41,14 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function handleClickSubtitle () {
-        console.log('subtitle');
+        videoPlayer.subtitle = !videoPlayer.subtitle;
+        if (videoPlayer.subtitle) {
+            findNextSubtitleElement();
+        } else {
+            subtitleDiv.innerText = '';
+        }
     }
+    
 
     function handleClickFullscreen () {
         console.log('fullscreen');
@@ -52,8 +63,23 @@ document.addEventListener('DOMContentLoaded', function(){
         element.innerText = `${minutes}:${seconds}`
     }
 
+    const findNextSubtitleElement = () => {
+        let currentSubtitleElement = subtitlesArray.findIndex(element => videoPlayer.currentTime <= element.endTime);
+        videoPlayer.subtitleIndex = currentSubtitleElement;
+    }
+
     function handleVideoTimeChange () {
         secondsToString (controlElements.currentTime,videoPlayer.currentTime);
+        controlElements.timeSlider.value = videoPlayer.currentTime/videoPlayer.duration*100;
+        if (videoPlayer.subtitle) {
+            const currentSubtitle = subtitlesArray[videoPlayer.subtitleIndex];
+            if (currentSubtitle.startTime <= videoPlayer.currentTime) {
+                subtitleDiv.innerText = currentSubtitle.text;
+                if (videoPlayer.subtitleIndex < subtitlesArray.length-1) {
+                    videoPlayer.subtitleIndex ++;
+                }
+            }
+        }        
     }
 
     controlElements.buttonPlay.addEventListener('click', handleClickPlay);
@@ -70,4 +96,6 @@ document.addEventListener('DOMContentLoaded', function(){
         secondsToString(controlElements.durationTime, videoPlayer.duration);
         videoPlayer.volume = Number(controlElements.volumeSlider.value)/100;
     });
-});
+};
+
+export default playerFunctions;

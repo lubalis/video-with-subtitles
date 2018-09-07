@@ -1,3 +1,5 @@
+import playerFunctions from './ui.js';
+
 fetch('http://n-2-17.dcs.redcdn.pl/file/o2/atendesoftware/portal/video/atendesoftware/atendesoftware_2a.txt')
   .then(response => response.text())
   .then(text => {
@@ -19,4 +21,6 @@ fetch('http://n-2-17.dcs.redcdn.pl/file/o2/atendesoftware/portal/video/atendesof
             };
           }
       }).filter(element => element !== undefined);
+      
+      playerFunctions(subtitles);
   });
