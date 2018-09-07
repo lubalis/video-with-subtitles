@@ -3,8 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>CodersLab</title>
+    <script src="js/out.js"></script>
 </head>
 <body>
-    <script src="js/out.js"></script>
+    <header>Video player</header>
+    <div class=container>
+        <video controls autoplay>
+            <source src="http://r.dcs.redcdn.pl/http/o2/atendesoftware/portal/video/atendesoftware/atendesoftware2.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div>
+            <button class='play' value='false'>Play/Pause</button>
+            <button class='stop' value='false'>Stop</button>
+            <span class='currentTime'></span>
+            <div class="slidecontainer">
+                <input class=' timeSlider' type='range' min='0' max='100' value='0'>
+            </div>
+            <span class='durationTime'></span>
+            <div class="slidecontainer">
+                <input class=' volumeSlider' type="range" min='0' max='100' value='50'>
+            </div>
+            <button class='mute' value='false'>Mute/Unmute</button>
+            <button class='subtitle' value='false'>Subtitle</button>
+            <button class='fullscreen' value='false'>Fullscreen</button>
+        </div>
+    </div>
 </body>
 </html>
