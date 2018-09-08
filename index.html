@@ -4,30 +4,32 @@
     <meta charset="UTF-8">
     <title>Video player</title>
     <script src="js/out.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>Video player</header>
     <div class='container'>
-        <video subtitle='false' subtitleIndex='0'>
+        <video subtitleIndex='0'>
             <source src="http://r.dcs.redcdn.pl/http/o2/atendesoftware/portal/video/atendesoftware/atendesoftware2.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div class='text'>
+        <div class='subtitle-div'>
         </div>
-        <div>
-            <button class='play' value='false'>Play/Pause</button>
-            <button class='stop' value='false'>Stop</button>
-            <span class='currentTime'></span>
-            <div class="slidecontainer">
-                <input class=' timeSlider' type='range' min='0' max='100' value='0'>
+        <div class='control-panel'>
+            <button class='play' value='false'><i class="fas fa-play"></i></button>
+            <button class='stop' value='false'><i class="fas fa-stop"></i></button>
+            <span class='current-time'>0:00</span>
+            <div class="time-slider-container">
+                <input class='time-slider' type='range' min='0' max='100' value='0'>
             </div>
-            <span class='durationTime'></span>
-            <div class="slidecontainer">
-                <input class=' volumeSlider' type="range" min='0' max='100' value='50'>
+            <span class='duration-time'></span>
+            <div class="volume-slider-container">
+                <input class='volume-slider' type="range" min='0' max='100' value='50'>
             </div>
-            <button class='mute' value='false'>Mute/Unmute</button>
-            <button class='subtitle' value='false'>Subtitle</button>
-            <button class='fullscreen' value='false'>Fullscreen</button>
+            <button class='mute' value='false'><i class="fas fa-volume-up"></i></button>
+            <button class='subtitle' value='false'><i class="fas fa-align-justify"></i></button>
+            <button class='fullscreen' value='false'><i class="fas fa-expand"></i></button>
         </div>
     </div>
 </body>
