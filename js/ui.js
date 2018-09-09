@@ -2,7 +2,6 @@ const playerFunctions = (subtitlesArray) => {
     
     const videoContainer = document.querySelector('.video-container');
     const videoPlayer = document.querySelector('video');
-    videoPlayer.subtitleIndex = 0;
     const subtitleDiv = document.querySelector('.subtitle-div');
     const controlContainer = document.querySelector('.control-container');
     
@@ -49,12 +48,13 @@ const playerFunctions = (subtitlesArray) => {
 
         const unmuteVolume = () => {
             videoPlayer.muted = false;
-            controlElements.volumeSlider.value = 50;
+            controlElements.volumeSlider.value = controlElements.volumeSlider.lastValue;
             controlElements.buttonMute.firstElementChild.className = 'fas fa-volume-up';
         }
 
         const muteVolume = () => {
             videoPlayer.muted = true;
+            controlElements.volumeSlider.lastValue = controlElements.volumeSlider.value;
             controlElements.volumeSlider.value = 0;
             controlElements.buttonMute.firstElementChild.className = 'fas fa-volume-off';
         }
@@ -246,9 +246,10 @@ const playerFunctions = (subtitlesArray) => {
         element.innerText = `${minutes}:${seconds}`
     }
 
-    const showDurationTime = () => {
+    const initVideoPlayer = () => {
         secondsToString(controlElements.durationTime, videoPlayer.duration);
         videoPlayer.volume = Number(controlElements.volumeSlider.value)/100;
+        videoPlayer.subtitleIndex = 0;
     }
 
     controlElements.buttonPlay.addEventListener('click', playOrPauseVideo);
@@ -261,7 +262,7 @@ const playerFunctions = (subtitlesArray) => {
 
     videoPlayer.addEventListener('timeupdate', videoTimeChange);
 
-    videoPlayer.addEventListener('loadeddata', showDurationTime);
+    videoPlayer.addEventListener('loadeddata', initVideoPlayer);
 
     videoContainer.addEventListener('mouseenter', showControlPanel);
     videoContainer.addEventListener('mouseleave', hideControlPanel);
