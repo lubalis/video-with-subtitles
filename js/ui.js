@@ -78,6 +78,7 @@ const playerFunctions = (subtitlesArray) => {
         }
 
         videoPlayer.subtitle = !videoPlayer.subtitle;
+        
         if (videoPlayer.subtitle) {
             activateSubtitle();
         } else {
@@ -131,6 +132,7 @@ const playerFunctions = (subtitlesArray) => {
         }
 
         videoPlayer.fullscreen = !videoPlayer.fullscreen;
+
         if (videoPlayer.fullscreen) {
             showFullscreen();
         } else {
