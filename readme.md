@@ -1,6 +1,7 @@
-# Odwtarzacz wideo z napisami
+# Video player with subtitles
 
-Do wykonania odtwarzacza wideo wykorzystano bundler *Webpack* wraz z kompilatorem *Babel*. Aby uzyskać plik *out.js* należy zainstalować odpowiednie paczki 
-`npm install`
-oraz uruchomić webpacka
-`npx webpack`
+Bundler *Webpack* and compiler *Babel* were used. To get *out.js* you should: 
+
+install packages `npm install`
+
+and use webpack `npx webpack`

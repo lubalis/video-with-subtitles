@@ -31,21 +31,12 @@ const playerFunctions = (subtitlesArray) => {
     const stopVideo = () => {
         videoPlayer.pause();
         videoPlayer.currentTime = 0;
-        subtitleDiv.innerText = '';
-        subtitleDiv.style.visibility = 'hidden';
+        hideSubtitles();
         videoPlayer.subtitleIndex = 0;
         controlElements.buttonPlay.firstElementChild.className = 'fas fa-play';
     }
 
-    const rewindVideo = () => {
-
-        const findNextSubtitlesElement = () => {
-            subtitleDiv.innerText = '';
-            subtitleDiv.style.visibility = 'hidden';
-            const currentSubtitleElementIndex = subtitlesArray.findIndex(element => videoPlayer.currentTime <= element.endTime);
-            videoPlayer.subtitleIndex = currentSubtitleElementIndex;  
-        }
-        
+    const rewindVideo = () => {    
         videoPlayer.currentTime = Number(controlElements.timeSlider.value)*videoPlayer.duration/100;
         findNextSubtitlesElement();
     }
@@ -77,19 +68,20 @@ const playerFunctions = (subtitlesArray) => {
 
     const switchSubtitles = () => {
         
-        const showIconSubtitlesActive = () => {
+        const activateSubtitle = () => {
+            findNextSubtitlesElement();
             controlElements.buttonSubtitle.style.color = 'yellow';
         }
 
-        const showIconSubtitlesNotActive = () => {
+        const deactivatedSubtitle = () => {
             controlElements.buttonSubtitle.style.color = 'white';
         }
 
         videoPlayer.subtitle = !videoPlayer.subtitle;
         if (videoPlayer.subtitle) {
-            showIconSubtitlesActive();
+            activateSubtitle();
         } else {
-            showIconSubtitlesNotActive();
+            deactivatedSubtitle();
         }
 
     }
@@ -144,6 +136,17 @@ const playerFunctions = (subtitlesArray) => {
         } else {
             hideFullscreen();
        }
+    }
+
+    const findNextSubtitlesElement = () => {
+        hideSubtitles();
+        const currentSubtitleElementIndex = subtitlesArray.findIndex(element => videoPlayer.currentTime <= element.endTime);
+        videoPlayer.subtitleIndex = currentSubtitleElementIndex;  
+    }
+
+    const hideSubtitles = () => {
+        subtitleDiv.innerText = '';
+        subtitleDiv.style.visibility = 'hidden';
     }
 
     const showControlPanel = () => {
@@ -215,11 +218,6 @@ const playerFunctions = (subtitlesArray) => {
             if (currentSubtitlesElement.endTime <= videoPlayer.currentTime) {
                 endCurrentSubtitles();
             }
-        }
-
-        const hideSubtitles = () => {
-            subtitleDiv.innerText = '';
-            subtitleDiv.style.visibility = 'hidden';
         }
 
         if (videoPlayer.currentTime === videoPlayer.duration) {
