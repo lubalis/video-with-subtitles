@@ -1,9 +1,11 @@
 const playerFunctions = (subtitlesArray) => {
     
+    const videoContainer = document.querySelector('.video-container');
     const videoPlayer = document.querySelector('video');
-
+    videoPlayer.subtitleIndex = 0;
     const subtitleDiv = document.querySelector('.subtitle-div');
-
+    const controlContainer = document.querySelector('.control-container');
+    
     const controlElements = {
         buttonPlay: document.querySelector('.play'),
         buttonStop: document.querySelector('.stop'),
@@ -16,78 +18,110 @@ const playerFunctions = (subtitlesArray) => {
         buttonFullscreen: document.querySelector('.fullscreen'),
     }
 
-    function handleClickPlay () {
+    const playOrPauseVideo = () => {
         if (videoPlayer.paused) {
             videoPlayer.play()
-            this.firstElementChild.className = 'fas fa-pause';
+            controlElements.buttonPlay.firstElementChild.className = 'fas fa-pause';
         } else {
             videoPlayer.pause();
-            this.firstElementChild.className = 'fas fa-play';
+            controlElements.buttonPlay.firstElementChild.className = 'fas fa-play';
         }
     }
 
-    function handleClickStop () {
+    const stopVideo = () => {
         videoPlayer.pause();
         videoPlayer.currentTime = 0;
         subtitleDiv.innerText = '';
+        subtitleDiv.style.visibility = 'hidden';
         videoPlayer.subtitleIndex = 0;
-        controlELements.buttonPlay.className = 'fas fa-play';
+        controlElements.buttonPlay.firstElementChild.className = 'fas fa-play';
     }
 
-    function handleChangeTime () {
-        videoPlayer.currentTime = Number(this.value)*videoPlayer.duration/100;
-        findNextSubtitleElement();
+    const rewindVideo = () => {
+
+        const findNextSubtitlesElement = () => {
+            subtitleDiv.innerText = '';
+            subtitleDiv.style.visibility = 'hidden';
+            const currentSubtitleElementIndex = subtitlesArray.findIndex(element => videoPlayer.currentTime <= element.endTime);
+            videoPlayer.subtitleIndex = currentSubtitleElementIndex;  
+        }
+        
+        videoPlayer.currentTime = Number(controlElements.timeSlider.value)*videoPlayer.duration/100;
+        findNextSubtitlesElement();
     }
 
-    function handleChangeVolume () {
-        videoPlayer.volume = this.value/100;
+    const changeVolume = () => {
+        videoPlayer.volume = controlElements.volumeSlider.value/100;
     }
 
-    function handleClickMute () {
-        if (videoPlayer.muted) {
+    const muteOrUnmute = () => {
+
+        const unmuteVolume = () => {
             videoPlayer.muted = false;
             controlElements.volumeSlider.value = 50;
-            this.firstElementChild.className = 'fas fa-volume-up';
-        } else {
+            controlElements.buttonMute.firstElementChild.className = 'fas fa-volume-up';
+        }
+
+        const muteVolume = () => {
             videoPlayer.muted = true;
             controlElements.volumeSlider.value = 0;
-            this.firstElementChild.className = 'fas fa-volume-off';
+            controlElements.buttonMute.firstElementChild.className = 'fas fa-volume-off';
+        }
+
+        if (videoPlayer.muted) {
+            unmuteVolume();
+        } else {
+            muteVolume();
         }
     }
 
-    function handleClickSubtitle () {
+    const switchSubtitles = () => {
+        
+        const showIconSubtitlesActive = () => {
+            controlElements.buttonSubtitle.style.color = 'yellow';
+        }
+
+        const showIconSubtitlesNotActive = () => {
+            controlElements.buttonSubtitle.style.color = 'white';
+        }
+
         videoPlayer.subtitle = !videoPlayer.subtitle;
         if (videoPlayer.subtitle) {
-            findNextSubtitleElement();
-            this.style.color = 'yellow';
+            showIconSubtitlesActive();
         } else {
-            subtitleDiv.innerText = '';
-            this.style.color = 'white';
-            document.querySelector('.subtitle-div').style.visibility = 'hidden';
+            showIconSubtitlesNotActive();
         }
+
     }
-    
-    function handleClickFullscreen () {
-        videoPlayer.fullscreen = !videoPlayer.fullscreen;
-        if (videoPlayer.fullscreen) {
-            document.querySelector('.container').style.maxWidth = '100%';
-            this.firstElementChild.className = 'fas fa-compress';
-            const container = document.querySelector('.container');
-            if (container.requestFullscreen) {
-                container.requestFullscreen();
+
+    const showOrHideFullscreen = () => {
+
+        const showFullscreen = () => {
+            videoContainer.style.maxWidth = '100%';
+            controlContainer.style.fontSize = '1.5em';
+            controlElements.buttonFullscreen.firstElementChild.className = 'fas fa-compress';
+
+            if (videoContainer.requestFullscreen) {
+                videoContainer.requestFullscreen();
             }
-            else if (container.mozRequestFullScreen) {
-                container.mozRequestFullScreen();
+            else if (videoContainer.mozRequestFullScreen) {
+                videoContainer.mozRequestFullScreen();
             }
-            else if (container.webkitRequestFullScreen) {
-                container.webkitRequestFullScreen();
+            else if (videoContainer.webkitRequestFullScreen) {
+                videoContainer.webkitRequestFullScreen();
             }
-            else if (container.msRequestFullscreen) {
-                container.msRequestFullscreen();
+            else if (videoContainer.msRequestFullscreen) {
+                videoContainer.msRequestFullscreen();
             }
-        } else {
-            document.querySelector('.container').style.maxWidth = '720px';
-            this.firstElementChild.className = 'fas fa-expand';
+
+            videoContainer.addEventListener('mousemove', controlPanelOnFullscreen);
+        }
+
+        const hideFullscreen = () => {
+            videoContainer.style.maxWidth = '720px';
+            controlContainer.style.fontSize = '1em';
+            controlElements.buttonFullscreen.firstElementChild.className = 'fas fa-expand';
+
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             }
@@ -100,7 +134,109 @@ const playerFunctions = (subtitlesArray) => {
             else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
             }
+
+            videoContainer.removeEventListener('mousemove', controlPanelOnFullscreen);
+        }
+
+        videoPlayer.fullscreen = !videoPlayer.fullscreen;
+        if (videoPlayer.fullscreen) {
+            showFullscreen();
+        } else {
+            hideFullscreen();
        }
+    }
+
+    const showControlPanel = () => {
+        controlContainer.style.bottom = '0%';
+    }
+
+    const hideControlPanel = () => {
+        controlContainer.style.bottom = '-8%';
+    }
+
+    const controlPanelOnFullscreen = (event) => {
+        if (event.pageY < 0.8*window.screen.height) {
+            hideControlPanel();
+        } else {
+            showControlPanel();
+        }
+    }
+
+    const videoTimeChange = () => {
+        
+        const showCurrentTime = () => {
+            secondsToString (controlElements.currentTime, videoPlayer.currentTime);
+            controlElements.timeSlider.value = videoPlayer.currentTime/videoPlayer.duration*100;
+        }
+
+        const goToStart = () => {
+            videoPlayer.currentTime = 0;
+            videoPlayer.subtitleIndex = 0;
+            controlElements.buttonPlay.firstElementChild.className = 'fas fa-play';
+        }
+
+        const showSubtitles = () => {
+            if (videoPlayer.subtitleIndex !==  -1) {
+                const currentSubtitle = subtitlesArray[videoPlayer.subtitleIndex];
+                if (currentSubtitle.startTime <= videoPlayer.currentTime) {
+                    subtitleDiv.innerText = currentSubtitle.text;
+                    subtitleDiv.style.visibility = 'visible';
+                }
+            }
+        }
+
+        const endSubtitlesOrGoToNext = () => {
+            const currentSubtitlesElement = subtitlesArray[videoPlayer.subtitleIndex];
+
+            const endCurrentSubtitles = () => {
+                
+                const hideSubtitlesAtTheEnd = () => {
+                    videoPlayer.subtitleIndex = -1;
+                    hideSubtitles();
+                }
+
+                const showNextSubtitlesOrHideCurrent = () => {
+                    const nextSubtitlesElement = subtitlesArray[videoPlayer.subtitleIndex];
+                    if (nextSubtitlesElement.startTime - currentSubtitlesElement.endTime < 0.5) {
+                        subtitleDiv.innerText = nextSubtitlesElement.text;
+                    } else {
+                        hideSubtitles();
+                    }
+                }
+
+                videoPlayer.subtitleIndex ++;
+                if (videoPlayer.subtitleIndex > subtitlesArray.length-1) {
+                    hideSubtitlesAtTheEnd();
+                } else {
+                    showNextSubtitlesOrHideCurrent();
+                }
+            }
+
+            if (currentSubtitlesElement.endTime <= videoPlayer.currentTime) {
+                endCurrentSubtitles();
+            }
+        }
+
+        const hideSubtitles = () => {
+            subtitleDiv.innerText = '';
+            subtitleDiv.style.visibility = 'hidden';
+        }
+
+        if (videoPlayer.currentTime === videoPlayer.duration) {
+            goToStart();
+        }
+
+        showCurrentTime();
+
+        if (videoPlayer.subtitle) {
+            if (subtitleDiv.innerText === '') {
+                showSubtitles();
+            } else {
+                endSubtitlesOrGoToNext();
+            }
+        } else {
+            hideSubtitles();
+        }       
     }
 
     const secondsToString = (element, time) => {
@@ -112,76 +248,25 @@ const playerFunctions = (subtitlesArray) => {
         element.innerText = `${minutes}:${seconds}`
     }
 
-    const findNextSubtitleElement = () => {
-        subtitleDiv.innerText = '';
-        let currentSubtitleElementIndex = subtitlesArray.findIndex(element => videoPlayer.currentTime <= element.endTime);
-        videoPlayer.subtitleIndex = currentSubtitleElementIndex;  
-    }
-
-    function handleVideoTimeChange () {
-        secondsToString (controlElements.currentTime,videoPlayer.currentTime);
-        controlElements.timeSlider.value = videoPlayer.currentTime/videoPlayer.duration*100;
-        if (videoPlayer.subtitle && videoPlayer.subtitleIndex !==  -1) {
-
-            const showSubtitle = () => {
-                const currentSubtitle = subtitlesArray[videoPlayer.subtitleIndex];
-                if (currentSubtitle.startTime <= videoPlayer.currentTime) {
-                    subtitleDiv.innerText = currentSubtitle.text;
-                    document.querySelector('.subtitle-div').style.visibility = 'visible';
-                }
-            }
-
-            const hideSubtitleAndShowNext = () => {
-                const currentSubtitle = subtitlesArray[videoPlayer.subtitleIndex];
-                if (currentSubtitle.endTime <= videoPlayer.currentTime) {
-                    videoPlayer.subtitleIndex ++;
-                    if (videoPlayer.subtitleIndex > subtitlesArray.length-1) {
-                        videoPlayer.subtitleIndex = -1;
-                        subtitleDiv.innerText = '';
-                        document.querySelector('.subtitle-div').style.visibility = 'hidden';
-                    } else {
-                        const nextSubtitle = subtitlesArray[videoPlayer.subtitleIndex];
-                        if (nextSubtitle.startTime - currentSubtitle.endTime < 0.5) {
-                            subtitleDiv.innerText = nextSubtitle.text;
-                        } else {
-                            subtitleDiv.innerText = '';
-                            document.querySelector('.subtitle-div').style.visibility = 'hidden';
-                        }
-                    }
-
-                }
-            }
-
-            if (subtitleDiv.innerText === '') {
-                showSubtitle();
-            } else {
-                hideSubtitleAndShowNext();
-            }
-        }        
-    }
-
-    controlElements.buttonPlay.addEventListener('click', handleClickPlay);
-    controlElements.buttonStop.addEventListener('click', handleClickStop);
-    controlElements.timeSlider.addEventListener('input', handleChangeTime);
-    controlElements.volumeSlider.addEventListener('input', handleChangeVolume);
-    controlElements.buttonMute.addEventListener('click', handleClickMute);
-    controlElements.buttonSubtitle.addEventListener('click', handleClickSubtitle);
-    controlElements.buttonFullscreen.addEventListener('click', handleClickFullscreen);
-
-    videoPlayer.addEventListener('timeupdate', handleVideoTimeChange);
-
-    videoPlayer.addEventListener('loadeddata', () => {
+    const showDurationTime = () => {
         secondsToString(controlElements.durationTime, videoPlayer.duration);
         videoPlayer.volume = Number(controlElements.volumeSlider.value)/100;
-    });
+    }
 
-    document.querySelector('.container').addEventListener('mouseover', () => {
-        document.querySelector('.control-panel').style.visibility = 'visible';
-    });
+    controlElements.buttonPlay.addEventListener('click', playOrPauseVideo);
+    controlElements.buttonStop.addEventListener('click', stopVideo);
+    controlElements.timeSlider.addEventListener('input', rewindVideo);
+    controlElements.volumeSlider.addEventListener('input', changeVolume);
+    controlElements.buttonMute.addEventListener('click', muteOrUnmute);
+    controlElements.buttonSubtitle.addEventListener('click', switchSubtitles);
+    controlElements.buttonFullscreen.addEventListener('click', showOrHideFullscreen);
 
-    document.querySelector('.container').addEventListener('mouseleave', () => {
-        document.querySelector('.control-panel').style.visibility = 'hidden';
-    });
+    videoPlayer.addEventListener('timeupdate', videoTimeChange);
+
+    videoPlayer.addEventListener('loadeddata', showDurationTime);
+
+    videoContainer.addEventListener('mouseenter', showControlPanel);
+    videoContainer.addEventListener('mouseleave', hideControlPanel);
 };
 
 export default playerFunctions;

@@ -9,27 +9,29 @@
 </head>
 <body>
     <header>Video player</header>
-    <div class='container'>
+    <div class='video-container'>
         <video subtitleIndex='0'>
             <source src="http://r.dcs.redcdn.pl/http/o2/atendesoftware/portal/video/atendesoftware/atendesoftware2.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div class='subtitle-div'>
-        </div>
-        <div class='control-panel'>
-            <button class='play' value='false'><i class="fas fa-play"></i></button>
-            <button class='stop' value='false'><i class="fas fa-stop"></i></button>
-            <span class='current-time'>0:00</span>
-            <div class="time-slider-container">
-                <input class='time-slider' type='range' min='0' max='100' value='0'>
+        <div class='control-container'>
+            <div class='subtitle-div'>
             </div>
-            <span class='duration-time'></span>
-            <div class="volume-slider-container">
-                <input class='volume-slider' type="range" min='0' max='100' value='50'>
+            <div class='control-panel'>
+                <button class='play' value='false'><i class="fas fa-play"></i></button>
+                <button class='stop' value='false'><i class="fas fa-stop"></i></button>
+                <span class='current-time'>0:00</span>
+                <div class="time-slider-container">
+                    <input class='time-slider' type='range' min='0' max='100' value='0'>
+                </div>
+                <span class='duration-time'></span>
+                <div class="volume-slider-container">
+                    <input class='volume-slider' type="range" min='0' max='100' value='50'>
+                </div>
+                <button class='mute' value='false'><i class="fas fa-volume-up"></i></button>
+                <button class='subtitle' value='false'><i class="fas fa-align-justify"></i></button>
+                <button class='fullscreen' value='false'><i class="fas fa-expand"></i></button>
             </div>
-            <button class='mute' value='false'><i class="fas fa-volume-up"></i></button>
-            <button class='subtitle' value='false'><i class="fas fa-align-justify"></i></button>
-            <button class='fullscreen' value='false'><i class="fas fa-expand"></i></button>
         </div>
     </div>
 </body>
